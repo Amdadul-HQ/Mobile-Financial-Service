@@ -6,7 +6,7 @@ import { IoMenu } from "react-icons/io5";
 const Navbar = () => {
     return (
         <header>
-            <nav className='bg-green-400 px-4 py-2 w-full flex justify-between items-center'>
+            <nav className='bg-slate-200 px-4 py-2 w-full flex justify-between items-center'>
                 <div className='w-[150px]'>
                     <img src={darklogo} className='' />
                 </div>

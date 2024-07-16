@@ -1,36 +1,53 @@
-import React from 'react';
+
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
+
+    const handleRegister=(e)=> {
+        e.preventDefault()
+        const form = e.target
+        const name = form.name.value;
+        const email = form.email.value;
+        const phoneNumber = form.phone.value;
+        const role = form.joinas.value;
+        const pin = form.pin.value;
+        const user = {
+            name,email,phoneNumber,role,pin
+        }
+        axios.post('http://localhost:5000/user',user).then(res=>{
+            console.log(res.data);
+        })
+    }
     return (
         <section className='min-h-[calc(100vh-70px)] px-3 w-full flex justify-center items-center'>
         <div className='w-full'>
         <div className='w-full shadow-slate-400 shadow-2xl bg-slate-100 p-5 rounded-2xl'>
         <h1 className='text-2xl text-center font-semibold py-3'>Register Now</h1>
-        <form>
+        <form onSubmit={handleRegister}>
             <div className='mt-3 text-xl'>
             <label className='block font-medium mb-1' htmlFor='name'>Full Name</label>
             <input name='name' className='block w-full h-10 px-3 py-1  rounded-md' required type='text' id='name' placeholder='Full Name'></input>
             </div>
             <div className='mt-3 text-xl'>
             <label className='block font-medium mb-1' htmlFor='email'>Email</label>
-            <input name='name' className='block w-full h-10 px-3 py-1  rounded-md' required type='email' id='email' placeholder='jhondeo@gmail.com'></input>
+            <input name='email' className='block w-full h-10 px-3 py-1  rounded-md' required type='email' id='email' placeholder='jhondeo@gmail.com'></input>
             </div>
             <div className='mt-3 text-xl'>
             <label className='block font-medium mb-1' htmlFor='phone'>Phone Number</label>
-            <input name='name' className='block w-full h-10 px-3 py-1  rounded-md' required type='tel' id='phone' placeholder='01XXXXX'></input>
+            <input name='phone' className='block w-full h-10 px-3 py-1  rounded-md' required type='tel' id='phone' placeholder='01XXXXX'></input>
             </div>
             <div className='text-xl'>
                 <p className='font-medium mb-1 mt-3'>Join As</p>
                 <div className='flex items-center justify-around'>
                     <div className='flex items-center justify-center flex-col gap-y-2'>
                     <label className='block font-medium mb-1 '   htmlFor='agent'>Agent</label>
-                <input name='joinas' value='agent' type='radio' id='agent'></input>
+                <input name='joinas' required value='agent' type='radio' id='agent'></input>
                 
                     </div>
                     <div className='flex items-center justify-center flex-col gap-y-2'>
                     <label  className='block font-medium mb-1' htmlFor='user'>User</label>
-                    <input name='joinas' value='user' type='radio' id='user'></input>
+                    <input name='joinas' required value='user' type='radio' id='user'></input>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import darklogo from '../assets/darklogo.png'
 import whitelogo from '../assets/whitelogo.png'
 import { IoMenu } from "react-icons/io5";
+import { CiUser } from "react-icons/ci";
+import { VscHistory } from "react-icons/vsc";
 
 const Navbar = () => {
     return (
@@ -11,7 +13,7 @@ const Navbar = () => {
                     <img src={darklogo} className='' />
                 </div>
                 <div>
-                <div className="drawer">
+                <div className="drawer z-50">
   <input id="my-drawer" type="checkbox" className="drawer-toggle" />
   <div className="drawer-content">
     {/* Page content here */}
@@ -19,11 +21,18 @@ const Navbar = () => {
   </div>
   <div className="drawer-side">
     <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-    <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-      {/* Sidebar content here */}
-      <li><a>Sidebar Item 1</a></li>
-      <li><a>Sidebar Item 2</a></li>
-    </ul>
+    <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+      <div className='space-y-3'>
+        <div className='p-6 rounded-full border flex items-center gap-x-2'>
+            <CiUser className='text-3xl'/>
+            <p className='text-base'>Amdadul Haque Bhuiyan</p>
+        </div>
+        <div className='p-6 rounded-full border flex items-center gap-x-2'>
+            <VscHistory className='text-3xl'/>
+            <p className='text-base'>Payments History</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

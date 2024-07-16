@@ -7,9 +7,28 @@ import {
   DialogTitle,
 } from '@headlessui/react'
 import { Fragment } from 'react'
+import axios from 'axios';
 
 
 const CashInModal = ({ setIsEditModalOpen, isOpen }) => {
+  const handleCashIn = (e)=>{
+    e.preventDefault()
+    const form = e.target;
+    const senderEmail = 'rimonamdadul301@gmail.com';
+    const agentNumber = form.agentNumber.value;
+    const amount = parseFloat(form.amount.value);
+    const pin = form.pin.value;
+    const date = new Date().toDateString()
+    const cashInData = {agentNumber,amount,pin,senderEmail,date}
+    console.log(cashInData);
+    axios.post('http://localhost:5000/cashin',cashInData)
+    .then(res => {
+      console.log(res.data);
+    })
+    .catch(error =>{
+      console.log(error)
+    })
+  }
     return (
         <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -48,10 +67,10 @@ const CashInModal = ({ setIsEditModalOpen, isOpen }) => {
                    Cash In
                   </DialogTitle>
                   <div className='mt-2 w-full'>
-                  <form>
+                  <form onSubmit={handleCashIn}>
                     <div>
-                      <label htmlFor='phone'>Receiver Phone Number</label>
-                      <input type='tel' name='receiverphone' id='phone' placeholder='Phone Number' className='h-10 px-3 py-1  rounded-md bg-slate-200 w-full' ></input>
+                      <label htmlFor='phone'>Agent Phone Number</label>
+                      <input type='tel' name='agentNumber' id='phone' placeholder='Phone Number' className='h-10 px-3 py-1  rounded-md bg-slate-200 w-full' ></input>
                     </div>
                     <div>
                       <label htmlFor='amount'>Amount</label>
@@ -65,7 +84,7 @@ const CashInModal = ({ setIsEditModalOpen, isOpen }) => {
                   <div className='mt-2 space-x-5'>
                     <button
                       type='submit'
-                      className='inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                      className='inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
                       
                     >
                       Send

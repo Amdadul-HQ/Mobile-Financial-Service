@@ -19,7 +19,7 @@ const CashIn = () => {
         <Lottie animationData={cashin} />
       </div>
       <h1 className="text-xl font-medium text-center absolute bottom-2">
-        Send Money
+        Cash In
       </h1>
       <CashInModal
             isOpen={isEditModalOpen}

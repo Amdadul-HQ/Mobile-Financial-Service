@@ -1,22 +1,25 @@
 
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
-
+    const navigate = useNavigate()
     const handleRegister=(e)=> {
         e.preventDefault()
         const form = e.target
         const name = form.name.value;
         const email = form.email.value;
         const phoneNumber = form.phone.value;
-        const role = form.joinas.value;
+        const requstedRole = form.joinas.value;
         const pin = form.pin.value;
         const user = {
-            name,email,phoneNumber,role,pin
+            name,email,phoneNumber,requstedRole,pin
         }
         axios.post('http://localhost:5000/user',user).then(res=>{
             console.log(res.data);
+            if(res.data.insertedId){
+                navigate('/home')
+            }
         })
     }
     return (

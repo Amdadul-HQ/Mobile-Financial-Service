@@ -1,16 +1,32 @@
+import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Login = () => {
+    const login=(e)=>{
+        e.preventDefault()
+        const form = e.target;
+        const email = form.email.value;
+        const pin = form.pin.value;
+        const userCredential = {email,pin}
+        console.log(userCredential);
+        axios.post('http://localhost:5000/login',userCredential)
+        .then(res =>{
+            console.log(res);
+        })
+        .catch(error=>{
+            console.log(error);
+        })
+    }
     return (
         <section className='min-h-[calc(100vh-70px)] px-3 w-full flex justify-center items-center'>
         <div className='w-full'>
         <div className='w-full shadow-slate-400 shadow-2xl bg-slate-100 p-5 rounded-2xl'>
         <h1 className='text-2xl text-center font-semibold py-3'>Log In</h1>
-        <form>
+        <form onSubmit={login}>
             <div className='mt-3 text-xl'>
             <label className='block font-medium mb-1' htmlFor='email'>Email</label>
-            <input name='name' className='block w-full h-10 px-3 py-1  rounded-md' required type='email' id='email' placeholder='jhondeo@gmail.com'></input>
+            <input name='email' className='block w-full h-10 px-3 py-1  rounded-md' required type='email' id='email' placeholder='jhondeo@gmail.com'></input>
             </div>
             {/* <div className='mt-3 text-xl'>
             <label className='block font-medium mb-1' htmlFor='phone'>Phone Number</label>

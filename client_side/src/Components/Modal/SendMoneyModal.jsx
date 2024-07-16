@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from '@headlessui/react'
 import { Fragment } from 'react'
+import axios from 'axios';
 
 
 const SendMoneyModal = ({ setIsEditModalOpen, isOpen }) => {
@@ -15,9 +16,16 @@ const SendMoneyModal = ({ setIsEditModalOpen, isOpen }) => {
       const form = e.target;
       const receiverphone = form.receiverphone.value;
       const pin = form.pin.value;
-      const amount = form.amount.value;
-      const sendMoneyData = {receiverphone,pin,amount}
-      console.log(sendMoneyData);
+      const amount = parseFloat(form.amount.value);
+      const senderEmail = 'rimonamdadul301@gmail.com'
+      const sendMoneyData = {receiverphone,pin,amount,senderEmail}
+      axios.post('http://localhost:5000/sendmoney',sendMoneyData)
+      .then(res =>{
+        console.log(res.data);
+      })
+      .catch(error=>{
+        console.log(error);
+      })
     }
     return (
         <Transition appear show={isOpen} as={Fragment}>

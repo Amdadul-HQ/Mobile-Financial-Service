@@ -16,7 +16,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   "mongodb+srv://rimonamdadul301:8enfTEuMZ1MRMN1w@cluster0.6vc9q5p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -104,10 +104,53 @@ async function run() {
           }
           const result = await usersCollection.updateOne({phoneNumber:receiverphone},addMoney)
           const result2 = await usersCollection.updateOne({email:senderEmail},removeMoney)
-          return res.send({ message: "Send Money Successful",result2 }).status(200);
+          return res.send({ message: "Send Money Successful",result2,result }).status(200);
         }
       }
     });
+
+    // Cash In api
+    app.post('/cashin',async(req,res)=>{
+      const cashInData = req.body;
+      console.log(cashInData);
+      const agentNumber = cashInData.agentNumber;
+      const senderEmail = cashInData.senderEmail;
+      const amount = cashInData.amount;
+      const requestDate = cashInData.date;
+      const pin = cashInData.pin;
+      const isExistAgent = await usersCollection.findOne({phoneNumber:agentNumber})
+      const isExistSender = await usersCollection.findOne({email:senderEmail})
+      console.log(isExistAgent,'isExistAgent');
+      console.log(isExistSender,'isExistSender');
+      if(!isExistAgent){
+        return res.status(401).send({message:'Agent Not Founded'})
+      }
+      if(isExistAgent?.role ==='agent' && isExistSender){
+        const isValiedPin = await bcrypt.compare(pin, isExistSender.pin);
+        if(!isValiedPin){
+          return res.status(401).send({ message: "Pin is Incorrect" });
+        }
+        if(isValiedPin){
+          const newCashInRequest = {
+            requestId: new ObjectId(),
+            requestNumber: isExistSender.phoneNumber,
+            requestAmount: amount,
+            requesterName: isExistSender.name,
+            requestDate: requestDate
+          }
+          const updateDocument = {
+            $push: { cashInRequest: newCashInRequest }
+          };
+          const result = await usersCollection.updateOne({phoneNumber:agentNumber},updateDocument)
+          res.status(200).send({message:'Cash In Request Successful',result})
+        }
+      }
+    })
+
+    // Cash Out Api
+    app.post('/cashout',async(req,res)=>{
+      
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

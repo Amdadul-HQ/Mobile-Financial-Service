@@ -1,30 +1,38 @@
 import React, { useState } from "react";
 import Lottie from "lottie-react";
 import balance from "../../assets/balance.json";
-import sendmoney from "../../assets/sendmoney.json";
-import cashin from "../../assets/cashin.json";
-import cashout from "../../assets/cashout.json";
-import transfer from "../../assets/transfer.json";
-import SendMoneyModal from "../../Components/Modal/SendMoneyModal";
 import SendMoney from "../../Components/SendMoney";
 import CashIn from "../../Components/CashIn";
 import CashOut from "../../Components/CashOut";
 import TransferMoney from "../../Components/TransferMoney";
 import CashInRequest from "../../Components/CashInRequest";
+import { useQuery } from "@tanstack/react-query";
+import { getEmailFromLocalStroage } from "../../Utils/localStroage";
+import axios from "axios";
 const UserHome = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const closeModal = () => {
     setIsOpen(false);
   };
+  const {data={},refetch} = useQuery({
+    queryKey:['info',getEmailFromLocalStroage()],
+    queryFn:async()=>{
+      const response = await axios.get(`http://localhost:5000/info/${getEmailFromLocalStroage()}`)
+      return response.data
+    }
+  })
   return (
     <div>
+      <div className="my-5 shadow-slate-200 px-5 py-2 shadow-2xl rounded-xl bg-slate-200 w-full">
+        <p className="text-2xl font-medium text-center">Welcome {data.name}</p>
+      </div>
       <div className="bg-slate-200 px-5 w-full mt-6 border shadow-slate-200 shadow-2xl rounded-xl ">
         <div className="w-40 flex justify-center flex-col items-center mx-auto">
           <Lottie animationData={balance}></Lottie>
         </div>
-        <h1 className="text-3xl py-2 text-center font-semibold">
-          Total Balance: 500 Tk
+        <h1 className="text-2xl py-2 text-center font-semibold">
+          Total Balance: {data.totalAmount} Tk
         </h1>
       </div>
       <div className="p-4 border rounded-2xl mt-5 bg-slate-200 shadow-slate-200 shadow-xl">
@@ -36,10 +44,11 @@ const UserHome = () => {
           <TransferMoney/>
         </div>
       </div>
-      {/* Agent Cash In Reuest */}
-      <div className="mt-5 bg-slate-200 shadow-slate-200 shadow-xl rounded-2xl p-4">
-      <CashInRequest/>
-      </div>
+      {
+        data.role ==='agent' && <div className="mt-5 bg-slate-200 shadow-slate-200 shadow-xl rounded-2xl p-4">
+        <CashInRequest/>
+        </div>
+      }
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Login = () => {
+    const navigate = useNavigate()
     const login=(e)=>{
         e.preventDefault()
         const form = e.target;
@@ -14,6 +15,7 @@ const Login = () => {
         axios.post('http://localhost:5000/login',userCredential)
         .then(res =>{
             saveEmailInLocalStroage(JSON.stringify(email))
+            navigate('/home')
             console.log(res);
         })
         .catch(error=>{

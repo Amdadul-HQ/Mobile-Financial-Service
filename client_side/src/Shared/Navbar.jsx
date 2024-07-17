@@ -5,10 +5,12 @@ import { IoMenu } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { VscHistory } from "react-icons/vsc";
 import { CiLogout } from "react-icons/ci";
-import { removeEmailFromLocalStroage } from '../Utils/localStroage';
+import { getEmailFromLocalStroage, removeEmailFromLocalStroage } from '../Utils/localStroage';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoHome } from "react-icons/go";
 import { MdOutlineManageAccounts } from "react-icons/md";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -16,6 +18,13 @@ const Navbar = () => {
     removeEmailFromLocalStroage()
     navigate('/')
   }
+  const {data={},refetch} = useQuery({
+    queryKey:['info',getEmailFromLocalStroage()],
+    queryFn:async()=>{
+      const response = await axios.get(`http://localhost:5000/info/${getEmailFromLocalStroage()}`)
+      return response.data
+    }
+  })
     return (
         <header>
             <nav className='bg-slate-200 px-4 py-2 w-full flex justify-between items-center'>
@@ -36,7 +45,7 @@ const Navbar = () => {
       <div className='space-y-3'>
         <div className='p-6 rounded-full border flex items-center gap-x-2'>
             <CiUser className='text-3xl'/>
-            <p className='text-base'>Amdadul Haque Bhuiyan</p>
+            <p className='text-base'>{data.name}</p>
         </div>
         <Link to='/home' className='p-6 rounded-full border flex items-center gap-x-2'>
             <GoHome className='text-3xl'/>
@@ -46,10 +55,12 @@ const Navbar = () => {
             <VscHistory className='text-3xl'/>
             <p className='text-base'>Payments History</p>
         </Link>
-        <Link to='/management' className='p-6 rounded-full border flex items-center gap-x-2'>
-            <MdOutlineManageAccounts className='text-3xl'/>
-            <p className='text-base'>Manage User & Agent</p>
-        </Link>
+        {
+          data?.role === 'Admin' && <Link to='/management' className='p-6 rounded-full border flex items-center gap-x-2'>
+          <MdOutlineManageAccounts className='text-3xl'/>
+          <p className='text-base'>Manage User & Agent</p>
+      </Link>
+        }
         <div onClick={handleLogOut} className='p-6 rounded-full border flex items-center gap-x-2'>
           <CiLogout className='text-3xl'/>
           <p className='text-base'>Log Out</p>

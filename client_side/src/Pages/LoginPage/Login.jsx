@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Login = () => {
     const login=(e)=>{
@@ -12,6 +13,7 @@ const Login = () => {
         console.log(userCredential);
         axios.post('http://localhost:5000/login',userCredential)
         .then(res =>{
+            saveEmailInLocalStroage(JSON.stringify(email))
             console.log(res);
         })
         .catch(error=>{

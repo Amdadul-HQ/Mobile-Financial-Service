@@ -16,10 +16,11 @@ const CashInModal = ({ setIsEditModalOpen, isOpen }) => {
     const form = e.target;
     const senderEmail = 'rimonamdadul301@gmail.com';
     const agentNumber = form.agentNumber.value;
+    const transitionType='cash In';
     const amount = parseFloat(form.amount.value);
     const pin = form.pin.value;
     const date = new Date().toDateString()
-    const cashInData = {agentNumber,amount,pin,senderEmail,date}
+    const cashInData = {agentNumber,amount,pin,senderEmail,date,transitionType}
     console.log(cashInData);
     axios.post('http://localhost:5000/cashin',cashInData)
     .then(res => {

@@ -10,7 +10,7 @@ import { Fragment } from 'react'
 import axios from 'axios';
 
 
-const CashOutModal = ({ setIsEditModalOpen, isOpen }) => {
+const CashInRequestModal = ({ setIsEditModalOpen, isOpen }) => {
   const handleCashOut = (e)=>{
     e.preventDefault()
     const form = e.target;
@@ -108,4 +108,4 @@ const CashOutModal = ({ setIsEditModalOpen, isOpen }) => {
     );
 };
 
-export default CashOutModal;
+export default CashInRequestModal;

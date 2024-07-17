@@ -10,6 +10,7 @@ import SendMoney from "../../Components/SendMoney";
 import CashIn from "../../Components/CashIn";
 import CashOut from "../../Components/CashOut";
 import TransferMoney from "../../Components/TransferMoney";
+import CashInRequest from "../../Components/CashInRequest";
 const UserHome = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -34,6 +35,10 @@ const UserHome = () => {
           <CashOut/>
           <TransferMoney/>
         </div>
+      </div>
+      {/* Agent Cash In Reuest */}
+      <div className="mt-5 bg-slate-200 shadow-slate-200 shadow-xl rounded-2xl p-4">
+      <CashInRequest/>
       </div>
     </div>
   );

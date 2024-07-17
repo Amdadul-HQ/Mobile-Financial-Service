@@ -1,8 +1,30 @@
-import React from 'react';
+import { getEmailFromLocalStroage } from '../../Utils/localStroage';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Management = () => {
+    const {data = [],refetch} = useQuery({
+        queryKey:['requestRole',getEmailFromLocalStroage()],
+        queryFn:async()=>{
+            const response = await axios.get(`http://localhost:5000/request/${getEmailFromLocalStroage()}`);
+            const data = response?.data;
+            return data;
+        }
+    })
+    const hanldeAccept =async (id,requstedRole) =>{
+        console.log(requstedRole);
+        await axios.put(`http://localhost:5000/accept/${id}`,{requstedRole})
+        .then(res =>{
+            console.log(res.data);
+            refetch()
+        })
+        .catch(error =>{
+            console.log(error.message)
+        })
+    }
+
     return (
-        <section className='my-10 px-4'>
+        <section className='my-10'>
             <div className='bg-slate-200 shadow-slate-200 shadow-xl rounded-2xl p-4'>
                 <h1 className='text-lg font-medium text-center leading-6 text-gray-900'>Manage User & Agent</h1>
                 <div>
@@ -35,23 +57,24 @@ const Management = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                            <tr>
+                            {
+                               data ? data.map(item => <tr key={item._id}>
                                 <td className="px-2 py-1 text-sm font-medium text-gray-700 whitespace-nowrap">
                                     <div className="inline-flex items-center gap-x-3">
 
                                         <div className="flex items-center gap-x-2">
                                             <div>
-                                                <h2 className="font-medium text-gray-800 dark:text-white ">Amdadul Haque</h2>
-                                                <p className="text-sm font-normal text-gray-600 dark:text-gray-400">01756171239</p>
+                                                <h2 className="font-medium text-gray-800 dark:text-white ">{item?.name}</h2>
+                                                <p className="text-sm font-normal text-gray-600 dark:text-gray-400">{item?.phoneNumber}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-2 py-1 text-center text-sm font-medium text-gray-700 whitespace-nowrap">
-                                   <p>Agent</p>
+                                   <p>{item?.requstedRole}</p>
                                 </td>
                                 <td className="px-2 py-1 flex flex-col gap-y-2 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
+                                <div onClick={()=>hanldeAccept(item._id,item.requstedRole)} className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
@@ -68,7 +91,9 @@ const Management = () => {
 
                                 </td>
                                 
-                            </tr>
+                            </tr>)
+                            : <></>
+                            }
                         </tbody>
                     </table>
                 </div>

@@ -8,5 +8,5 @@ export const removeEmailFromLocalStroage = () =>{
 }
 
 export const getEmailFromLocalStroage = () =>{
-    localStorage.getItem('email')
+   return JSON.parse(localStorage.getItem('email'))
 }

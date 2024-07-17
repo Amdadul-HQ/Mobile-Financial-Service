@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Register = () => {
     const navigate = useNavigate()
@@ -10,10 +11,12 @@ const Register = () => {
         const name = form.name.value;
         const email = form.email.value;
         const phoneNumber = form.phone.value;
+        const roleRequest = true;
         const requstedRole = form.joinas.value;
+        saveEmailInLocalStroage(JSON.stringify(email))
         const pin = form.pin.value;
         const user = {
-            name,email,phoneNumber,requstedRole,pin
+            name,email,phoneNumber,requstedRole,roleRequest,pin
         }
         axios.post('http://localhost:5000/user',user).then(res=>{
             console.log(res.data);

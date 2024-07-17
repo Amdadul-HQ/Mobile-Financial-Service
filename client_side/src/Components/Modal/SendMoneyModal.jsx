@@ -8,6 +8,7 @@ import {
 } from '@headlessui/react'
 import { Fragment } from 'react'
 import axios from 'axios';
+import { getEmailFromLocalStroage } from '../../Utils/localStroage';
 
 
 const SendMoneyModal = ({ setIsEditModalOpen, isOpen }) => {
@@ -18,7 +19,7 @@ const SendMoneyModal = ({ setIsEditModalOpen, isOpen }) => {
       const pin = form.pin.value;
       const transitionType='send Money';
       const amount = parseFloat(form.amount.value);
-      const senderEmail = 'rimonamdadul301@gmail.com'
+      const senderEmail = getEmailFromLocalStroage()
       const sendMoneyData = {receiverphone,pin,amount,senderEmail,transitionType}
       axios.post('http://localhost:5000/sendmoney',sendMoneyData)
       .then(res =>{

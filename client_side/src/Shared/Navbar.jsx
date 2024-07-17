@@ -6,13 +6,15 @@ import { CiUser } from "react-icons/ci";
 import { VscHistory } from "react-icons/vsc";
 import { CiLogout } from "react-icons/ci";
 import { removeEmailFromLocalStroage } from '../Utils/localStroage';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoHome } from "react-icons/go";
 import { MdOutlineManageAccounts } from "react-icons/md";
 
 const Navbar = () => {
+  const navigate = useNavigate()
   const handleLogOut = ()=>{
     removeEmailFromLocalStroage()
+    navigate('/')
   }
     return (
         <header>

@@ -47,7 +47,8 @@ async function run() {
       if (isExist) {
         return res.send({ message: "User Already Exist" });
       }
-      const hasedPin = bcrypt.hashSync(pin, 14);
+
+      const hasedPin = await bcrypt.hashSync(pin, 14);
       const result = await usersCollection.insertOne({
         ...user,
         pin: hasedPin,
@@ -180,6 +181,42 @@ async function run() {
         const result = await transitionCollection.insertOne({...cashOutData,receiverName:isExistSender.name,agentName:isExistAgent.name})
         return res.status(200).send({message:"Cash Out Successful"})
       }
+    })
+
+    // Get Role Request for Admin
+    app.get('/request/:email',async(req,res)=>{
+      const email = req.params.email;
+      console.log(email);
+      const admin = await usersCollection.findOne({email})
+      if(!admin){
+        return res.send({message:"Email Not Founded"})
+      }
+      if(admin){
+       const isAdmin = admin.role === 'Admin'
+       if(!isAdmin){
+        return res.send({message:'unauthorized'})
+       }
+       if(isAdmin){
+        const result = await usersCollection.find({roleRequest:true}).toArray()
+        return res.send(result)
+       }
+      }
+    })
+
+    // Accept request
+
+    app.put('/accept/:id',async(req,res)=>{
+      const role = req.body.requstedRole
+      const id = req.params.id;
+      console.log(role,id);
+      const updateDoc = {
+        $unset: { requstedRole: "",
+                  roleRequest :"",
+         },
+        $set: { role } // Set 'role' field to 'user'
+    }
+    const result = await usersCollection.updateOne({_id:new ObjectId(id)},updateDoc)
+    res.send({message:`${role} Role Request Accepted`})
     })
 
     // Send a ping to confirm a successful connection

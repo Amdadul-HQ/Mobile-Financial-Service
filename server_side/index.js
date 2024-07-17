@@ -10,6 +10,7 @@ const app = express();
 const corsOptions = {
   origin: ["http://localhost:5173", "http://localhost:5174"],
   optionSuccessStatus: 200,
+  credentials:true
 };
 
 app.use(cors(corsOptions));
@@ -35,6 +36,32 @@ async function run() {
     const usersCollection = client.db("MFS").collection("users");
     const transitionCollection = client.db("MFS").collection("allTransition");
     // await client.connect();
+    // jwt
+    app.post('/jwt',async(req,res)=>{
+      const user = req.body;
+      console.log('user token',user);
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECREAT,{expiresIn:'30d'})
+      res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' ? true : false , 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      
+      })
+      .send({success:true})
+    })
+
+    app.post('/logout',async(req,res)=>{
+      const user = req.body
+      res.clearCookie('token',{
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' ? true : false ,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        maxAge:0
+      }).send({success:true})
+    })
+
+
 
     // User insart
     app.post("/user", async (req, res) => {
@@ -151,6 +178,51 @@ async function run() {
       }
     })
 
+    // Cash In Request api for agent
+    app.get('/cashinrequest/:email',async(req,res)=>{
+      const email = req.params.email;
+      const isExistEmail = await usersCollection.findOne({email})
+      if(!isExistEmail){
+        return res.send({message:'Unauthorize'})
+      }
+      if(isExistEmail.role === 'agent'){
+        res.send(isExistEmail?.cashInRequest)
+      }
+    })
+
+    // cash In approved api for agent
+    app.patch('/cashinapproved/:email',async(req,res)=>{
+      const email = req.params.email;
+      const receiverData = req.body;
+      const receiverNumber = receiverData.number;
+      console.log(receiverNumber);
+      const amount = parseFloat(receiverData.amount);
+      const id = receiverData.id
+      console.log(email,receiverData);
+      const isExist = await usersCollection.findOne({email})
+      if(!isExist){
+        return res.send({message:'unauthorize'})
+      }
+      if(isExist.role === 'agent'){
+        const receiver = await usersCollection.findOne({phoneNumber:receiverNumber})
+        if(!receiver){
+          return res.send({message:"Receiver Number Not Founded"})
+        }
+        
+        const updateDoc = {
+          $inc:{totalAmount:amount}
+        }
+
+        const updateDocument = {
+          $inc:{totalAmount:-amount},
+          $pull: { cashInRequest: { requestId: new ObjectId(id) } }
+        };
+        const result2 = await usersCollection.updateOne({phoneNumber:receiverNumber},updateDoc)
+        const result = await usersCollection.updateOne({email},updateDocument)
+        res.send({message:"Cash IN Successful"})
+      }
+    })
+
     // Cash Out Api
     app.post('/cashout',async(req,res)=>{
       const cashOutData = req.body;
@@ -203,8 +275,19 @@ async function run() {
       }
     })
 
-    // Accept request
+    // is valid user
+    app.get('/validuser/:email',async(req,res)=>{
+      const email = req.params.email;
+      const isExist = await usersCollection.findOne({email})
+      if(isExist){
+        res.send(true)
+      }
+      else{
+        res.send(false)
+      }
+    })
 
+    // Accept request
     app.put('/accept/:id',async(req,res)=>{
       const role = req.body.requstedRole
       const id = req.params.id;
@@ -217,6 +300,19 @@ async function run() {
     }
     const result = await usersCollection.updateOne({_id:new ObjectId(id)},updateDoc)
     res.send({message:`${role} Role Request Accepted`})
+    })
+
+
+    // Get User Info as user as agent as Admin
+    app.get('/info/:email',async(req,res)=>{
+      const email = req.params.email;
+      const isExist = await usersCollection.findOne({email})
+      if(!isExist){
+        return res.send({message:"unauthorize"})
+      }
+      if(isExist){
+        res.send(isExist)
+      }
     })
 
     // Send a ping to confirm a successful connection

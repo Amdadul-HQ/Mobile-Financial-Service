@@ -15,6 +15,13 @@ const Login = () => {
         axios.post('http://localhost:5000/login',userCredential)
         .then(res =>{
             saveEmailInLocalStroage(JSON.stringify(email))
+            axios.post('http://localhost:5000/jwt',{email},{withCredentials:true})
+            .then( res => {
+                console.log(res.data);
+            } )
+            .catch(error => {
+                console.log(error);
+            })
             navigate('/home')
             console.log(res);
         })
@@ -45,7 +52,7 @@ const Login = () => {
             </div>
         </form>
         <div className="divider">Or</div>
-            <p className='text-xl mt-2 flex items-center text-center justify-center gap-x-2'>Don't have a account? <Link className='font-medium text-blue-500' to='/'>Register</Link></p>
+            <p className='text-xl mt-2 flex items-center text-center justify-center gap-x-2'>Don't have a account? <Link className='font-medium text-blue-500' to='/register'>Register</Link></p>
         </div>
         </div>
         </section>

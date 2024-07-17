@@ -6,6 +6,7 @@ import Register from "../Pages/RegisterPage/Register";
 import Login from "../Pages/LoginPage/Login";
 import PaymentHistory from "../Pages/PaymentHistory/PaymentHistory";
 import Management from "../Pages/Management/Management";
+import PrivateRoutes from "./PrivateRoutes";
 
 const router = createBrowserRouter([
     {
@@ -15,15 +16,15 @@ const router = createBrowserRouter([
         children:[
             {
                 path:'/',
-                element:<Register/>
-            },
-            {
-                path:'/login',
                 element:<Login/>
             },
             {
+                path:'/register',
+                element:<Register/>
+            },
+            {
                 path:'/home',
-                element:<Home/>
+                element:<PrivateRoutes><Home/></PrivateRoutes>
             },
             {
                 path:'/paymenthistory',

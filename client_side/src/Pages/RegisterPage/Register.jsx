@@ -5,7 +5,7 @@ import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Register = () => {
     const navigate = useNavigate()
-    const handleRegister=(e)=> {
+    const handleRegister= async(e)=> {
         e.preventDefault()
         const form = e.target
         const name = form.name.value;
@@ -13,13 +13,20 @@ const Register = () => {
         const phoneNumber = form.phone.value;
         const roleRequest = true;
         const requstedRole = form.joinas.value;
-        saveEmailInLocalStroage(JSON.stringify(email))
         const pin = form.pin.value;
         const user = {
             name,email,phoneNumber,requstedRole,roleRequest,pin
         }
-        axios.post('http://localhost:5000/user',user).then(res=>{
+       await axios.post('http://localhost:5000/user',user).then(res=>{
             console.log(res.data);
+            saveEmailInLocalStroage(JSON.stringify(email))
+            axios.post('http://localhost:5000/jwt',{email},{withCredentials:true})
+            .then( res => {
+                console.log(res.data);
+            } )
+            .catch(error => {
+                console.log(error);
+            })
             if(res.data.insertedId){
                 navigate('/home')
             }
@@ -66,7 +73,7 @@ const Register = () => {
             </div>
         </form>
         <div className="divider">Or</div>
-            <p className='text-xl mt-2 flex items-center text-center justify-center gap-x-2'>Already have a account? <Link className='font-medium text-blue-500' to='/login'>Login</Link></p>
+            <p className='text-xl mt-2 flex items-center text-center justify-center gap-x-2'>Already have a account? <Link className='font-medium text-blue-500' to='/'>Login</Link></p>
         </div>
         </div>
         </section>

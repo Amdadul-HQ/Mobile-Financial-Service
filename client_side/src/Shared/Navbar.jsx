@@ -14,9 +14,15 @@ import axios from 'axios';
 
 const Navbar = () => {
   const navigate = useNavigate()
-  const handleLogOut = ()=>{
+  const handleLogOut =async ()=>{
     removeEmailFromLocalStroage()
-    navigate('/')
+    await axios.post('http://localhost:5000/logout',{email:getEmailFromLocalStroage()},{withCredentials:true})
+    .then(res =>{
+      navigate('/')
+    })
+    .catch(error =>{
+      console.log(error);
+    })
   }
   const {data={},refetch} = useQuery({
     queryKey:['info',getEmailFromLocalStroage()],

@@ -149,7 +149,33 @@ async function run() {
 
     // Cash Out Api
     app.post('/cashout',async(req,res)=>{
-      
+      const cashOutData = req.body;
+      const senderEmail = cashOutData.senderEmail;
+      const agentNumber = cashOutData.agentNumber;
+      const amount = cashOutData.amount;
+      const pin = cashOutData.pin;
+      const cashOutDate = cashOutData.date;
+      const isExistAgent = await usersCollection.findOne({phoneNumber:agentNumber})
+      const isExistSender = await usersCollection.findOne({email:senderEmail})
+      if(!isExistAgent){
+        return res.status(401).send({message:'Agent Not Founded'})
+      }
+      if(isExistAgent?.role ==='agent' && isExistSender){
+        const feeRate = 0.015; 
+        const fee = amount * feeRate;
+        if(isExistSender.totalAmount<amount+fee){
+          return res.status(403).send({message:'Insufficient balance for the transaction and fee.'})
+        }
+        const addMoney = {
+          $inc:{totalAmount:amount+fee}
+        }
+        const removeMoney = {
+          $inc:{totalAmount:-(amount+fee)}
+        }
+        const addMoneyFromAgent = await usersCollection.updateOne({phoneNumber:agentNumber},addMoney)
+        const removeMoneyFromUser = await usersCollection.updateOne({email:senderEmail},removeMoney)
+        return res.status(200).send({message:"Cash Out Successful"})
+      }
     })
 
     // Send a ping to confirm a successful connection

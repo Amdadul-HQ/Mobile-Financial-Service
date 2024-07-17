@@ -33,6 +33,7 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     const usersCollection = client.db("MFS").collection("users");
+    const transitionCollection = client.db("MFS").collection("allTransition");
     // await client.connect();
 
     // User insart
@@ -82,6 +83,7 @@ async function run() {
       const receiverphone = sendMoneyData.receiverphone;
       console.log(sendMoneyData);
       const sender = await usersCollection.findOne({ email:senderEmail });
+      const receiver = await usersCollection.findOne({phoneNumber:receiverphone})
     if(sender.phoneNumber == receiverphone){
       return res.send({message:"You can't send money yourself"})
     }
@@ -94,8 +96,7 @@ async function run() {
         if (!isValiedPin) {
           return res.status(401).send({ message: "Pin is Incorrect" });
         }
-        if (isValiedPin === true) {
-          const receiver = await usersCollection.findOne({phoneNumber:receiverphone})
+        if (isValiedPin === true && receiver) {
           const addMoney = {
             $inc:{totalAmount:amount}
           }
@@ -104,6 +105,7 @@ async function run() {
           }
           const result = await usersCollection.updateOne({phoneNumber:receiverphone},addMoney)
           const result2 = await usersCollection.updateOne({email:senderEmail},removeMoney)
+          const result3 = await transitionCollection.insertOne({...sendMoneyData,receiverName:receiver.name})
           return res.send({ message: "Send Money Successful",result2,result }).status(200);
         }
       }
@@ -142,6 +144,7 @@ async function run() {
             $push: { cashInRequest: newCashInRequest }
           };
           const result = await usersCollection.updateOne({phoneNumber:agentNumber},updateDocument)
+          
           res.status(200).send({message:'Cash In Request Successful',result})
         }
       }
@@ -174,6 +177,7 @@ async function run() {
         }
         const addMoneyFromAgent = await usersCollection.updateOne({phoneNumber:agentNumber},addMoney)
         const removeMoneyFromUser = await usersCollection.updateOne({email:senderEmail},removeMoney)
+        const result = await transitionCollection.insertOne({...cashOutData,receiverName:isExistSender.name,agentName:isExistAgent.name})
         return res.status(200).send({message:"Cash Out Successful"})
       }
     })

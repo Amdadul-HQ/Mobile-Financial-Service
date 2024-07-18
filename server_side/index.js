@@ -61,6 +61,25 @@ async function run() {
       }).send({success:true})
     })
 
+    // middleware
+    const logger = (req,res,next)=>{
+
+    }
+
+    const verifyToken =(req,res,next)=>{
+      const token = req.cookies.token
+      if(!token){
+        return res.status(401).send({message:'Unauthorize Access'})
+      }
+      jwt.verify(token,process.env.ACCESS_TOKEN_SECREAT,(error,decoded)=>{
+        if(error){
+          return res.status(401).send({message:"Unauthorize Access"})
+        }
+        req.user = decoded
+        next()
+      })
+    }
+
 
 
     // User insart
@@ -278,6 +297,8 @@ async function run() {
     // is valid user
     app.get('/validuser/:email',async(req,res)=>{
       const email = req.params.email;
+      const cookie = req.cookies
+      console.log(req.cookies,'cookies');
       const isExist = await usersCollection.findOne({email})
       if(isExist){
         res.send(true)
@@ -304,8 +325,13 @@ async function run() {
 
 
     // Get User Info as user as agent as Admin
-    app.get('/info/:email',async(req,res)=>{
+    app.get('/info/:email', verifyToken,async(req,res)=>{
       const email = req.params.email;
+      console.log(req.user,'token owner');
+      if(email !== req.user.email){
+        return res.status(403).send({message:"Forbidden Access"})
+      }
+      // console.log(cookie);
       const isExist = await usersCollection.findOne({email})
       if(!isExist){
         return res.send({message:"unauthorize"})

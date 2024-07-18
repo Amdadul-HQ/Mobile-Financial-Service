@@ -28,7 +28,7 @@ const router = createBrowserRouter([
             },
             {
                 path:'/paymenthistory',
-                element:<PaymentHistory/>
+                element:<PrivateRoutes><PaymentHistory/></PrivateRoutes>
             },
             {
                 path:'/management',

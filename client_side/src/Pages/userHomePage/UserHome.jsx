@@ -9,19 +9,17 @@ import CashInRequest from "../../Components/CashInRequest";
 import { useQuery } from "@tanstack/react-query";
 import { getEmailFromLocalStroage } from "../../Utils/localStroage";
 import axios from "axios";
+import Loading from "../LoadingPage/Loading";
 const UserHome = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-  const {data={},refetch} = useQuery({
+
+  const {data={},refetch,isLoading} = useQuery({
     queryKey:['info',getEmailFromLocalStroage()],
     queryFn:async()=>{
-      const response = await axios.get(`http://localhost:5000/info/${getEmailFromLocalStroage()}`)
+      const response = await axios.get(`http://localhost:5000/info/${getEmailFromLocalStroage()}`,{withCredentials:true})
       return response.data
     }
   })
+  if(isLoading)return <Loading/>
   return (
     <div>
       <div className="my-5 shadow-slate-200 px-5 py-2 shadow-2xl rounded-xl bg-slate-200 w-full">

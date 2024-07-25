@@ -236,8 +236,10 @@ async function run() {
           $inc:{totalAmount:-amount},
           $pull: { cashInRequest: { requestId: new ObjectId(id) } }
         };
-        const result2 = await usersCollection.updateOne({phoneNumber:receiverNumber},updateDoc)
+
         const result = await usersCollection.updateOne({email},updateDocument)
+        const result2 = await usersCollection.updateOne({phoneNumber:receiverNumber},updateDoc)
+        const result3  = await transitionCollection.insertOne()
         res.send({message:"Cash IN Successful"})
       }
     })
@@ -274,6 +276,13 @@ async function run() {
       }
     })
 
+    //Get payment history 
+    app.get('/payment/:email',async(req,res)=>{
+      const email = req.params.email;
+      const result = await transitionCollection.find({senderEmail:email}).toArray()
+      res.send(result)
+    })
+
     // Get Role Request for Admin
     app.get('/request/:email',async(req,res)=>{
       const email = req.params.email;
@@ -304,7 +313,7 @@ async function run() {
         res.send(true)
       }
       else{
-        res.send(false)
+        res.send(false,'hello')
       }
     })
 
@@ -313,14 +322,26 @@ async function run() {
       const role = req.body.requstedRole
       const id = req.params.id;
       console.log(role,id);
+      if(role==='user'){
+        const updateDoc = {
+          $unset: { requstedRole: "",
+                    roleRequest :"",
+           },
+          $set: { role ,totalAmount:10} // Set 'role' field to 'user'
+      }
+      const result = await usersCollection.updateOne({_id:new ObjectId(id)},updateDoc) 
+      return res.send({message:`${role} Role Request Accepted <br/> You Get 10 Tk Welcome Bonus`})
+    }
+    if(role === 'agent'){
       const updateDoc = {
         $unset: { requstedRole: "",
-                  roleRequest :"",
-         },
-        $set: { role } // Set 'role' field to 'user'
-    }
-    const result = await usersCollection.updateOne({_id:new ObjectId(id)},updateDoc)
-    res.send({message:`${role} Role Request Accepted`})
+          roleRequest :"",
+        },
+        $set: { role ,totalAmount:10000} // Set 'role' field to 'user'
+      }
+      const result = await usersCollection.updateOne({_id:new ObjectId(id)},updateDoc) 
+      return res.send({message:`${role} Role Request Accepted <br/> You Get 10000 Tk Welcome Bonus`})
+      }
     })
 
 
@@ -337,7 +358,7 @@ async function run() {
         return res.send({message:"unauthorize"})
       }
       if(isExist){
-        res.send(isExist)
+      res.send(isExist)
       }
     })
 

@@ -15,7 +15,7 @@ const Login = () => {
         axios.post('http://localhost:5000/login',userCredential)
         .then(res =>{
             saveEmailInLocalStroage(JSON.stringify(email))
-            axios.post('http://localhost:5000/jwt',{email},{withCredentials:true})
+            axios.get('http://localhost:5000/jwt',{email},{withCredentials:true})
             .then( res => {
                 console.log(res.data);
             } )

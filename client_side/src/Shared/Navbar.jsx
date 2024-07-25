@@ -31,6 +31,7 @@ const Navbar = () => {
   useEffect(() => {
     setEmail(getEmailFromLocalStroage());
   }, [data]);
+  console.log(data);
   const handleLogOut = async () => {
     removeEmailFromLocalStroage();
     await axios

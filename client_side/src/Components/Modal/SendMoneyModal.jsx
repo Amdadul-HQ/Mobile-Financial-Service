@@ -20,7 +20,8 @@ const SendMoneyModal = ({ setIsEditModalOpen, isOpen }) => {
       const transitionType='send Money';
       const amount = parseFloat(form.amount.value);
       const senderEmail = getEmailFromLocalStroage()
-      const sendMoneyData = {receiverphone,pin,amount,senderEmail,transitionType}
+      const date = new Date().toDateString()
+      const sendMoneyData = {receiverphone,pin,amount,senderEmail,transitionType,date}
       axios.post('http://localhost:5000/sendmoney',sendMoneyData)
       .then(res =>{
         console.log(res.data);

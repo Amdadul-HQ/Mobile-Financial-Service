@@ -8,13 +8,14 @@ import {
 } from '@headlessui/react'
 import { Fragment } from 'react'
 import axios from 'axios';
+import { getEmailFromLocalStroage } from '../../Utils/localStroage';
 
 
 const CashOutModal = ({ setIsEditModalOpen, isOpen }) => {
   const handleCashOut = (e)=>{
     e.preventDefault()
     const form = e.target;
-    const senderEmail = 'rimonamdadul301@gmail.com';
+    const senderEmail = getEmailFromLocalStroage()
     const agentNumber = form.agentNumber.value;
     const transitionType='Cash Out';
     const amount = parseFloat(form.amount.value);

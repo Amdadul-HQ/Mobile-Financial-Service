@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React from 'react';
+import React, { useState } from 'react';
 import { IoEyeSharp } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,8 +7,9 @@ import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Login = () => {
     const navigate = useNavigate()
+    const [showPin,setShowPin] = useState(false)
     const handleShow = () => {
-
+        setShowPin(!showPin)
     }
     const login=(e)=>{
         e.preventDefault()
@@ -46,9 +47,11 @@ const Login = () => {
             </div>
             <div className='mt-3 text-xl relative'>
             <label className='block font-medium mb-1' htmlFor='pin'>Enter Your PIN</label>
-            <input name='pin' type='password' className='block w-full h-10 px-3 py-1  rounded-md' required id='pin' placeholder='PIN'></input>
-            {/* <IoEyeSharp className='absolute top-[60%] right-2 text-gray-400'/> */}
-            <IoEyeOffSharp className='absolute top-[60%] right-2 text-gray-400'/>
+            <input name='pin' type={showPin ? 'password' : 'text'} className='block w-full h-10 px-3 py-1  rounded-md' required id='pin' placeholder='PIN'></input>
+            {
+               showPin ? <IoEyeSharp onClick={handleShow} className='absolute top-[60%] right-2 text-gray-400'/> : <IoEyeOffSharp onClick={handleShow} className='absolute top-[60%] right-2 text-gray-400'/>
+            }
+            
             </div>
             <div>
                 <button type='submit' className='text-xl w-full py-2 bg-blue-500 rounded-xl text-white mt-2'>Log in</button>

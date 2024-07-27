@@ -1,10 +1,15 @@
 import axios from 'axios';
 import React from 'react';
+import { IoEyeSharp } from "react-icons/io5";
+import { IoEyeOffSharp } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import { saveEmailInLocalStroage } from '../../Utils/localStroage';
 
 const Login = () => {
     const navigate = useNavigate()
+    const handleShow = () => {
+
+    }
     const login=(e)=>{
         e.preventDefault()
         const form = e.target;
@@ -12,10 +17,10 @@ const Login = () => {
         const pin = form.pin.value;
         const userCredential = {email,pin}
         console.log(userCredential);
-        axios.post('http://localhost:5000/login',userCredential)
+        axios.get('http://localhost:5000/login',userCredential)
         .then(res =>{
             saveEmailInLocalStroage(JSON.stringify(email))
-            axios.get('http://localhost:5000/jwt',{email},{withCredentials:true})
+            axios.post('http://localhost:5000/jwt',{email},{withCredentials:true})
             .then( res => {
                 console.log(res.data);
             } )
@@ -39,13 +44,11 @@ const Login = () => {
             <label className='block font-medium mb-1' htmlFor='email'>Email</label>
             <input name='email' className='block w-full h-10 px-3 py-1  rounded-md' required type='email' id='email' placeholder='jhondeo@gmail.com'></input>
             </div>
-            {/* <div className='mt-3 text-xl'>
-            <label className='block font-medium mb-1' htmlFor='phone'>Phone Number</label>
-            <input name='name' className='block w-full h-10 px-3 py-1  rounded-md' required type='tel' id='phone' placeholder='01XXXXX'></input>
-            </div> */}
-            <div className='mt-3 text-xl'>
+            <div className='mt-3 text-xl relative'>
             <label className='block font-medium mb-1' htmlFor='pin'>Enter Your PIN</label>
             <input name='pin' type='password' className='block w-full h-10 px-3 py-1  rounded-md' required id='pin' placeholder='PIN'></input>
+            {/* <IoEyeSharp className='absolute top-[60%] right-2 text-gray-400'/> */}
+            <IoEyeOffSharp className='absolute top-[60%] right-2 text-gray-400'/>
             </div>
             <div>
                 <button type='submit' className='text-xl w-full py-2 bg-blue-500 rounded-xl text-white mt-2'>Log in</button>

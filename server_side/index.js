@@ -102,7 +102,7 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/login", async (req, res) => {
+    app.get("/login", async (req, res) => {
       const userCredential = req.body;
       console.log(userCredential);
       const email = userCredential.email;
@@ -346,7 +346,7 @@ async function run() {
 
 
     // Get User Info as user as agent as Admin
-    app.get('/info/:email', verifyToken,async(req,res)=>{
+    app.get('/info/:email',verifyToken,async(req,res)=>{
       const email = req.params.email;
       console.log(req.user,'token owner');
       if(email !== req.user.email){

@@ -58,7 +58,7 @@ const Login = () => {
             </div>
         </form>
         <div className="divider">Or</div>
-            <p className='text-xl mt-2 flex items-center text-center justify-center gap-x-2'>Don't have a account? <Link className='font-medium text-blue-500' to='/register'>Register</Link></p>
+            <p className='text-base mt-2 flex items-center text-center justify-center gap-x-2'>Don't have a account? <Link className='font-medium text-blue-500' to='/register'>Register</Link></p>
         </div>
         </div>
         </section>

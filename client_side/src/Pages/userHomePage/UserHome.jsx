@@ -11,7 +11,7 @@ import axios from "axios";
 import Loading from "../LoadingPage/Loading";
 const UserHome = () => {
 
-  const {data={},refetch,isLoading} = useQuery({
+  const {data={},isLoading} = useQuery({
     queryKey:['info',getEmailFromLocalStroage()],
     queryFn:async()=>{
       const response = await axios.get(`http://localhost:5000/info/${getEmailFromLocalStroage()}`,{withCredentials:true})
